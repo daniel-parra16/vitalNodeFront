@@ -1,0 +1,75 @@
+.table-container {
+    background: white;
+    border-radius: 12px;
+    padding: 20px;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+}
+
+.user-table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.user-table th {
+    text-align: left;
+    padding: 12px;
+    font-size: 14px;
+    color: #6b7280;
+    border-bottom: 1px solid #e5e7eb;
+}
+
+.user-table td {
+    padding: 12px;
+    border-bottom: 1px solid #f3f4f6;
+    font-size: 14px;
+}
+
+.empty {
+    text-align: center;
+    padding: 20px;
+    color: #9ca3af;
+}
+
+/* Roles */
+.role-badge {
+    background: #eef2ff;
+    color: #3730a3;
+    padding: 4px 8px;
+    border-radius: 6px;
+    font-size: 12px;
+}
+
+/* Estado */
+.status.active {
+    color: #16a34a;
+    font-weight: 500;
+}
+
+.status.inactive {
+    color: #dc2626;
+    font-weight: 500;
+}
+
+/* Botones */
+.actions {
+    display: flex;
+    gap: 8px;
+}
+
+.btn {
+    border: none;
+    padding: 6px 10px;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 12px;
+}
+
+.btn.edit {
+    background: #2563eb;
+    color: white;
+}
+
+.btn.delete {
+    background: #dc2626;
+    color: white;
+}
