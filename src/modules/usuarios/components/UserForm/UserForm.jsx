@@ -18,7 +18,10 @@ export default function UserForm({
   });
 
   const [roles, setRoles] = useState([]);
-  const [extraData, setExtraData] = useState({});
+  const [extraData, setExtraData] = useState({
+  subEspecialidadesText: "",
+  habilidadesText: ""
+});
   
   useEffect(() => {
   if (initialData) {
@@ -84,35 +87,43 @@ export default function UserForm({
   };
 
   const handleExtra = (e) => {
-    const { name, value } = e.target;
+  const { name, value } = e.target;
 
-    if (name === "habilidades" || name === "subEspecialidades") {
-      setExtraData((prev) => ({
-        ...prev,
-        [name]: value
-          .split(",")
-          .map((v) => v.trim())
-          .filter((v) => v !== ""),
-      }));
-    } else {
-      setExtraData((prev) => ({
-        ...prev,
-        [name]: value,
-      }));
-    }
-  };
+  setExtraData((prev) => ({
+    ...prev,
+    [name]: value,
+  }));
+};
 
   const handleSubmit = (e) => {
-    e.preventDefault();
+  e.preventDefault();
 
-    onSubmit(
-      {
-        ...form,
-        roles,
-      },
-      extraData
-    );
+  const payloadExtra = {
+    ...extraData,
+    subEspecialidades:
+      extraData.subEspecialidadesText
+        ? extraData.subEspecialidadesText
+            .split(",")
+            .map(v => v.trim())
+            .filter(Boolean)
+        : [],
+    habilidades:
+      extraData.habilidadesText
+        ? extraData.habilidadesText
+            .split(",")
+            .map(v => v.trim())
+            .filter(Boolean)
+        : []
   };
+
+  onSubmit(
+    {
+      ...form,
+      roles,
+    },
+    payloadExtra
+  );
+};
 
   return (
     <form onSubmit={handleSubmit} className={styles.form}>
@@ -230,16 +241,12 @@ export default function UserForm({
           <div className={styles.field}>
             <label>Subespecialidades</label>
             <input
-              className={styles.input}
-              name="subEspecialidades"
-              placeholder="Subespecialidades separadas por coma"
-              value={
-                Array.isArray(extraData.subEspecialidades)
-                  ? extraData.subEspecialidades.join(", ")
-                  : ""
-              }
-              onChange={handleExtra}
-            />
+  className={styles.input}
+  name="subEspecialidadesText"
+  placeholder="Subespecialidades separadas por coma"
+  value={extraData.subEspecialidadesText}
+  onChange={handleExtra}
+/>
           </div>
 
           <div className={styles.field}>
