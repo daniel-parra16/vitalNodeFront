@@ -3,6 +3,7 @@ import { useNavigate, Link } from "react-router-dom";
 import axios from "../../api/axiosConfig";
 import styles from "./auth.module.css";
 import LoadingModal from "../../components/LoadingModal/LoadingModal";
+import StatusModal from "../../components/StatusModal/StatusModal";
 
 export default function Register() {
     const navigate = useNavigate();
@@ -18,8 +19,13 @@ export default function Register() {
     });
 
     const [loading, setLoading] = useState(false);
-    const [message, setMessage] = useState("");
-    const [error, setError] = useState("");
+
+    const [statusModal, setStatusModal] = useState({
+        isOpen: false,
+        status: "info",
+        title: "",
+        message: "",
+    });
 
     const handleChange = (e) => {
         setForm({
@@ -28,31 +34,76 @@ export default function Register() {
         });
     };
 
+    // 🔹 convierte errores del backend en texto legible
+    const formatErrors = (errores) => {
+        if (!errores) return "Error de validación";
+
+        return Object.entries(errores)
+            .map(([_, mensaje]) => `• ${mensaje}`)
+            .join("\n");
+    };
+
     const handleSubmit = async (e) => {
         e.preventDefault();
 
         try {
             setLoading(true);
+
             const res = await axios.post("/auth/registro", form);
 
             setLoading(false);
 
-            setMessage(res.data.message || "Usuario registrado");
+            setStatusModal({
+                isOpen: true,
+                status: "success",
+                title: "Registro exitoso",
+                message: res.data.message || "Usuario creado correctamente",
+            });
 
             setTimeout(() => navigate("/login"), 1500);
 
         } catch (err) {
-            setError(err.response?.data?.message || "Error en registro");
+            setLoading(false);
+
+            const data = err.response?.data;
+
+            const mensajeBackend =
+                data?.message || "No se pudo crear el usuario";
+
+            const erroresFormateados = formatErrors(data?.errores);
+
+            setStatusModal({
+                isOpen: true,
+                status: "error",
+                title: data?.error || "Error de registro",
+                message: data?.errores
+                    ? erroresFormateados
+                    : mensajeBackend,
+            });
         }
     };
 
     return (
         <div className={styles.registerContainer}>
+
             <LoadingModal isOpen={loading} />
+
+            <StatusModal
+                isOpen={statusModal.isOpen}
+                status={statusModal.status}
+                title={statusModal.title}
+                message={statusModal.message}
+                onClose={() =>
+                    setStatusModal((prev) => ({ ...prev, isOpen: false }))
+                }
+                autoClose={statusModal.status === "success"}
+                autoCloseTime={1500}
+            />
 
             <div className={styles.registerCard + " large"}>
 
                 <div className="logo">VITALNODE</div>
+
                 <p style={{ marginBottom: "20px", color: "#666" }}>
                     Crear cuenta
                 </p>
@@ -115,7 +166,6 @@ export default function Register() {
                                 name="correo"
                                 onChange={handleChange}
                                 required
-                                autoComplete="off"
                             />
                         </div>
 
@@ -126,7 +176,6 @@ export default function Register() {
                                 name="password"
                                 onChange={handleChange}
                                 required
-                                autoComplete="off"
                             />
                         </div>
 
@@ -137,9 +186,6 @@ export default function Register() {
                     </button>
 
                 </form>
-
-                {error && <div className="error">{error}</div>}
-                {message && <div style={{ color: "green" }}>{message}</div>}
 
                 <div className="auth-link">
                     ¿Ya tienes cuenta? <Link to="/login">Inicia sesión</Link>
