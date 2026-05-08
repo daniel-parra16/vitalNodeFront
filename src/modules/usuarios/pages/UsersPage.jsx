@@ -15,6 +15,8 @@ export default function UsersPage() {
         create,
         update,
         remove,
+        getDoctorData,
+        getNurseData
     } = useUsers();
 
     const [isOpen, setIsOpen] = useState(false);
@@ -89,6 +91,8 @@ export default function UsersPage() {
                 <UserForm
                     onSubmit={handleSubmit}
                     initialData={editingUser}
+                    getDoctorData={getDoctorData}
+                    getNurseData={getNurseData}
                 />
             </UserModal>
 

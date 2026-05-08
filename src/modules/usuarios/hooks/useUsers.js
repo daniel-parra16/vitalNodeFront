@@ -6,7 +6,9 @@ import {
     deleteUser,
     updateRoles,
     createDoctor,
-    createNurse
+    createNurse,
+    getDoctorById,
+    getNurseById
 } from "../services/userService";
 
 export default function useUsers() {
@@ -119,6 +121,26 @@ export default function useUsers() {
         }
     };
 
+    // 👨‍⚕️ OBTENER DATOS MÉDICO
+    const getDoctorData = async (numeroDocumento) => {
+        try {
+            return await getDoctorById(numeroDocumento);
+        } catch (err) {
+            setError(err.response?.data?.message || "Error al cargar médico");
+            return null;
+        }
+    };
+
+    // 👩‍⚕️ OBTENER DATOS ENFERMERA
+    const getNurseData = async (numeroDocumento) => {
+        try {
+            return await getNurseById(numeroDocumento);
+        } catch (err) {
+            setError(err.response?.data?.message || "Error al cargar enfermera");
+            return null;
+        }
+    };
+
     // 🔄 cargar al iniciar
     useEffect(() => {
         fetchUsers();
@@ -132,6 +154,8 @@ export default function useUsers() {
         create,
         update,
         remove,
-        changeRoles
+        changeRoles,
+        getDoctorData,
+        getNurseData
     };
 }

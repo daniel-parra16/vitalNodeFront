@@ -1,6 +1,12 @@
 import "./UserTable.css";
 
 export default function UserTable({ users, onEdit, onDelete }) {
+    const roleLabels = {
+  ROLE_ADMIN: "Administrador",
+  ROLE_DOCTOR: "Doctor",
+  ROLE_NURSE: "Enfermera",
+  ROLE_USER: "Paciente",
+};
     return (
         <div className="table-container">
             <table className="user-table">
@@ -38,7 +44,9 @@ export default function UserTable({ users, onEdit, onDelete }) {
 
                                 <td>
                                     <span className="role-badge">
-                                        {user.roles?.join(", ")}
+                                        {user.roles
+                                        ?.map((role) => roleLabels[role] || role)
+                                        .join(", ")}
                                     </span>
                                 </td>
 

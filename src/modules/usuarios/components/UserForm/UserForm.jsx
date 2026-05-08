@@ -2,7 +2,12 @@ import { useState, useEffect } from "react";
 import RoleSelector from "../RoleSelector/RoleSelector";
 import styles from "./UserForm.module.css";
 
-export default function UserForm({ onSubmit, initialData }) {
+export default function UserForm({
+  onSubmit,
+  initialData,
+  getDoctorData,
+  getNurseData
+}) {
   const [form, setForm] = useState({
     tipo: "",
     numeroDocumento: "",
@@ -14,17 +19,60 @@ export default function UserForm({ onSubmit, initialData }) {
 
   const [roles, setRoles] = useState([]);
   const [extraData, setExtraData] = useState({});
+  
+  useEffect(() => {
+  if (initialData) {
+    setForm({
+      tipo: initialData.tipo || "",
+      numeroDocumento: initialData.numeroDocumento || "",
+      nom: initialData.nom || "",
+      ape: initialData.ape || "",
+      email: initialData.email || "",
+      phone: initialData.phone || "",
+    });
+
+    setRoles(initialData.roles || []);
+  }
+}, [initialData]);
 
   useEffect(() => {
-    if (initialData) {
-      setForm((prev) => ({
-        ...prev,
-        ...initialData,
-      }));
+  const loadExtraData = async () => {
+    if (!initialData?.numeroDocumento) return;
 
-      setRoles(initialData.roles || []);
+    // 👨‍⚕️ DOCTOR
+    if (initialData.roles?.includes("ROLE_DOCTOR")) {
+      const doctorData = await getDoctorData(initialData.numeroDocumento);
+
+      if (doctorData) {
+        setExtraData((prev) => ({
+          ...prev,
+          registroMedico: doctorData.registroMedico || "",
+          especialidad: doctorData.especialidad || "",
+          subEspecialidades: doctorData.subEspecialidades || [],
+          aniosExperiencia: doctorData.aniosExperiencia || "",
+          activo: doctorData.activo ?? true,
+        }));
+      }
     }
-  }, [initialData]);
+
+    // 👩‍⚕️ NURSE
+    if (initialData.roles?.includes("ROLE_NURSE")) {
+      const nurseData = await getNurseData(initialData.numeroDocumento);
+
+      if (nurseData) {
+        setExtraData((prev) => ({
+          ...prev,
+          registroProfesional: nurseData.registroProfesional || "",
+          area: nurseData.area || "",
+          habilidades: nurseData.habilidades || [],
+          activo: nurseData.activo ?? true,
+        }));
+      }
+    }
+  };
+
+  loadExtraData();
+}, [initialData]);
 
   const handleChange = (e) => {
     const { name, value } = e.target;

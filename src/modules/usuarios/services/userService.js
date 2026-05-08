@@ -49,3 +49,15 @@ export const createNurse = async (numeroDocumento, data) => {
     const res = await axios.post(`/enfermeras/${numeroDocumento}`, data);
     return res.data.data;
 };
+
+// 👨‍⚕️ OBTENER MÉDICO
+export const getDoctorById = async (numeroDocumento) => {
+    const res = await axios.get(`/medicos/${numeroDocumento}`);
+    return res.data.data;
+};
+
+// 👩‍⚕️ OBTENER ENFERMERA
+export const getNurseById = async (numeroDocumento) => {
+    const res = await axios.get(`/enfermeras/${numeroDocumento}`);
+    return res.data.data;
+};
